@@ -10,34 +10,33 @@ class Game
     def winner
         @players.find{|player| player.lives != 0}
     end
+    
+    def game_over
+        @player1.lives == 0 || @player2.lives == 0
+    end
 
-    def check_answer(input)
-        if input == (@number1 + @number2)
-            puts "YES! You are correct."
-            puts
-        else
-            puts "That is incorrect! Sorry, you lose a point!"
-            puts
-            @turn.current_player.lose_score
-        end 
+    def give_scores
+        puts "SCORES: \t Player 1: #{@player1.lives}/#{@player1.total_lives} \t VS \t Player 2: #{@player2.lives}/#{@player2.total_lives}" 
+        sleep 1
+        puts
+    end
+
+    def end_game
+        puts "#{winner.name} wins with a score of #{winner.lives}/#{winner.total_lives}"
+        puts "-------GAME OVER--------"
+        puts "Good bye!"
     end
 
     def play
-        until (@player1.lives == 0 || @player2.lives == 0) do
-            @number1 = rand(1...20)
-            @number2 = rand(1...20)
-            puts "#{@turn.current_player.name}: What does #{@number1} plus #{@number2} equal?"
+        until (game_over) do
+            @turn.ask_question
             answer = gets.strip.to_i
-            check_answer(answer)
-            puts "SCORES: \t Player 1: #{@player1.lives}/#{@player1.total_lives} \t VS \t Player 2: #{@player2.lives}/#{@player2.total_lives}" 
-            sleep 1
-            puts
-            break if (@player1.lives == 0 || @player2.lives == 0)  
+            @turn.check_answer(answer)
+            give_scores
+            break if (game_over)  
             @turn.change_turns  
         end
-            puts "#{winner.name} wins with a score of #{winner.lives}/#{winner.total_lives}"
-            puts "-------GAME OVER--------"
-            puts "Good bye!"
+        end_game
     end    
 
 end    
